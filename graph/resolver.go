@@ -8,4 +8,5 @@ import "buncms/graph/model"
 
 type Resolver struct {
 	todos []*model.Todo
+	codes []*model.Codes
 }

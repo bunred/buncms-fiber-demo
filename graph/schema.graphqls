@@ -14,8 +14,33 @@ type User {
   name: String!
 }
 
+enum Status {
+  Draft
+  Ready
+  Approved
+  Rejected
+  Published
+}
+
+enum CodeType {
+  qr
+  bar
+}
+
+scalar UUID
+
+type Codes {
+  id: ID!
+  created_at: String
+  updated_at: String
+  type: CodeType!
+  status: Status
+  generated_uuid: UUID
+}
+
 type Query {
   todos: [Todo!]!
+  codes: [Codes!]!
 }
 
 input NewTodo {

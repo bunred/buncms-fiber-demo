@@ -2,6 +2,21 @@
 
 package model
 
+import (
+	"fmt"
+	"io"
+	"strconv"
+)
+
+type Codes struct {
+	ID            string   `json:"id"`
+	CreatedAt     *string  `json:"created_at"`
+	UpdatedAt     *string  `json:"updated_at"`
+	Type          CodeType `json:"type"`
+	Status        *Status  `json:"status"`
+	GeneratedUUID *string  `json:"generated_uuid"`
+}
+
 type NewTodo struct {
 	Text   string `json:"text"`
 	UserID string `json:"userId"`
@@ -17,4 +32,92 @@ type Todo struct {
 type User struct {
 	ID   string `json:"id"`
 	Name string `json:"name"`
+}
+
+type CodeType string
+
+const (
+	CodeTypeQr  CodeType = "qr"
+	CodeTypeBar CodeType = "bar"
+)
+
+var AllCodeType = []CodeType{
+	CodeTypeQr,
+	CodeTypeBar,
+}
+
+func (e CodeType) IsValid() bool {
+	switch e {
+	case CodeTypeQr, CodeTypeBar:
+		return true
+	}
+	return false
+}
+
+func (e CodeType) String() string {
+	return string(e)
+}
+
+func (e *CodeType) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = CodeType(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid CodeType", str)
+	}
+	return nil
+}
+
+func (e CodeType) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+type Status string
+
+const (
+	StatusDraft     Status = "Draft"
+	StatusReady     Status = "Ready"
+	StatusApproved  Status = "Approved"
+	StatusRejected  Status = "Rejected"
+	StatusPublished Status = "Published"
+)
+
+var AllStatus = []Status{
+	StatusDraft,
+	StatusReady,
+	StatusApproved,
+	StatusRejected,
+	StatusPublished,
+}
+
+func (e Status) IsValid() bool {
+	switch e {
+	case StatusDraft, StatusReady, StatusApproved, StatusRejected, StatusPublished:
+		return true
+	}
+	return false
+}
+
+func (e Status) String() string {
+	return string(e)
+}
+
+func (e *Status) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = Status(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid Status", str)
+	}
+	return nil
+}
+
+func (e Status) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
 }
